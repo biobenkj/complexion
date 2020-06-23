@@ -1,0 +1,27 @@
+Package: complexion
+Type: Package
+Title: Compute library complexity measures from sequencing data
+Description: A set of utilities to compute library complexity using rational function
+    rational function approximation approaches implemented in preseqR. WORK IN PROGRESS!
+Version: 0.1.0
+Date: 2020-06-23
+Authors@R: person(c("Benjamin", "K"), "Johnson", role=c("aut", "cre"), email="ben.johnson@vai.org")
+Author: Benjamin K Johnson [aut, cre]
+Maintainer: Benjamin K Johnson <ben.johnson@vai.org>
+URL: https://github.com/biobenkj/complexion
+BugReports: https://github.com/biobenkj/complexion/issues
+Encoding: UTF-8
+License: GPL-3 + file LICENSE
+Depends:
+    R (>= 3.0.0)
+Imports:
+    GenomicAlignments,
+    Rsamtools,
+    preseqR,
+    rtracklayer,
+    ggplot2
+Suggests:
+    covr,
+    testthat
+RoxygenNote: 7.1.0
+Roxygen: list(markdown = TRUE)
