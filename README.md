@@ -5,9 +5,19 @@
 
 Complexion is an R package for computing library complexity measures using rational function approximation as implemented in preseqR. Currently, it only supports reading in and processing BAM files. Though there are stubs that will eventually support splice junction bed files to compute complexity from.
 
+### Installation
+
+````
+# for the development version
+BiocManager::install("biobenkj/complexion")
+````
+
 ### Quickstart
 
 ````
+# load the library
+library(complexion)
+
 # list the BAMs
 bams <- list.files(pattern="*.bam$")
 
