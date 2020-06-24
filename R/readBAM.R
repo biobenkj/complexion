@@ -15,8 +15,9 @@
 #' @export
 #'
 
-readPairedEnd <- function(bam, genome=c("hg19", "hg38", "mm10", "mm9"),
-                          bamParams=NULL, which=NULL, ...) {
+readBAM <- function(bam, genome=c("hg19", "hg38", "mm10", "mm9"),
+                    is.single=FALSE, bamParams=NULL, which=NULL,
+                    style="UCSC", ...) {
   
   getStdChromGRanges <- function(x) {
     ## ONLY works if chromosomes are properly ordered as in OrganismDbi
@@ -31,27 +32,52 @@ readPairedEnd <- function(bam, genome=c("hg19", "hg38", "mm10", "mm9"),
                       hg38 = getStdChromGRanges(data("hg38.gr", package="complexion")),
                       mm9 = getStdChromGRanges(data("mm9.gr", package="complexion")),
                       mm10 = getStdChromGRanges(data("mm10.gr", package="complexion")))
-    } 
-    bamParams <- properPairedEndFilters(which=which, ...)
+    }
+    #just in case we don't have UCSC convention
+    if (style == "NCBI") seqlevelsStyle(which) <- "NCBI"
+    if (style == "Ensembl") seqlevelsStyle(which) <- "Ensembl" 
+    
+    #make sure the index file is there
+    if (!file.exists(paste0(bam, ".bai"))) {
+      message("BAM index file doesn't exist for ", bam, ".")
+      stop("Need to index the BAM before importing.")
+    }
+
+    #now check if we are in single-end mode
+    if (is.single) {
+      bamParams <- singleEndFilters(which=which, ...)
+    } else {
+      bamParams <- properPairedEndFilters(which=which, ...) 
+      }
   }
   
-  readGAlignmentPairs(bam, param=bamParams)
-  
+  if (is.single) {
+    readGAlignments(bam, param=bamParams)
+  } else {
+    readGAlignmentPairs(bam, param=bamParams)
+  }
 }
 
 ## not exported; used for preseq estimation
 properPairedEndFilters <- function(which, ...) {
   
-  ScanBamParam(what=c("rname","strand","pos","isize","mapq"),
+  ScanBamParam(what=c("rname","strand","pos","isize","mapq","qual","cigar"),
                flag=scanBamFlag(isProperPair=TRUE,
                                 isNotPassingQualityControls=FALSE), 
+               which=which, ...)
+}
+
+singleEndFilters <- function(which, ...) {
+  
+  ScanBamParam(what=c("rname","strand","pos","mapq","qual","cigar"),
+               flag=scanBamFlag(isNotPassingQualityControls=FALSE), 
                which=which, ...)
 }
 
 ## not exported; used for BAM filtering
 uniquePairedEndFilters <- function(which, ...) {
   
-  ScanBamParam(what=c("rname","strand","pos","isize","mapq"),
+  ScanBamParam(what=c("rname","strand","pos","isize","mapq","qual","cigar"),
                flag=scanBamFlag(isProperPair=TRUE,
                                 isDuplicate=FALSE,
                                 isNotPrimaryRead=FALSE,
