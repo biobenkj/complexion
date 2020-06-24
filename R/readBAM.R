@@ -3,8 +3,10 @@
 #'
 #' @param bam       character string, the BAM file to parse
 #' @param genome    optional character string, the genome assembly to target
+#' @param is.single whethr the input BAM is single-end or not
 #' @param bamParams optional any parameters to pass through to ScanBamParam
 #' @param which     optional a GRanges object with specific regions to extract
+#' @param style     what style the assembly annotations are in (e.g. 'chr1' == UCSC or '1' == NCBI)
 #'
 #' @return  a GenomicAlignmentPairs object
 #'
@@ -27,11 +29,16 @@ readBAM <- function(bam, genome=c("hg19", "hg38", "mm10", "mm9"),
   if(is.null(bamParams)) {
     if (is.null(which)) {
       genome <- match.arg(genome)
+      genome.gr <- switch(genome,
+                          hg19 = data("hg19.gr", package="complexion"),
+                          hg38 = data("hg38.gr", package="complexion"),
+                          mm9 = data("mm9.gr", package="complexion"),
+                          mm10 = data("mm10.gr", package="complexion"))
       which <- switch(genome,
-                      hg19 = getStdChromGRanges(data("hg19.gr", package="complexion")),
-                      hg38 = getStdChromGRanges(data("hg38.gr", package="complexion")),
-                      mm9 = getStdChromGRanges(data("mm9.gr", package="complexion")),
-                      mm10 = getStdChromGRanges(data("mm10.gr", package="complexion")))
+                      hg19 = getStdChromGRanges(hg19.gr),
+                      hg38 = getStdChromGRanges(hg38.gr),
+                      mm9 = getStdChromGRanges(mm9.gr),
+                      mm10 = getStdChromGRanges(mm10.gr))
     }
     #just in case we don't have UCSC convention
     if (style == "NCBI") seqlevelsStyle(which) <- "NCBI"

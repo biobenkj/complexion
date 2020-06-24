@@ -20,9 +20,13 @@ readBAM(
 
 \item{genome}{optional character string, the genome assembly to target}
 
+\item{is.single}{whethr the input BAM is single-end or not}
+
 \item{bamParams}{optional any parameters to pass through to ScanBamParam}
 
 \item{which}{optional a GRanges object with specific regions to extract}
+
+\item{style}{what style the assembly annotations are in (e.g. 'chr1' == UCSC or '1' == NCBI)}
 }
 \value{
 a GenomicAlignmentPairs object

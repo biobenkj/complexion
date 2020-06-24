@@ -3,7 +3,7 @@ Type: Package
 Title: Compute library complexity measures from sequencing data
 Description: A set of utilities to compute library complexity using rational function
     rational function approximation approaches implemented in preseqR. WORK IN PROGRESS!
-Version: 0.1.3
+Version: 0.1.4
 Date: 2020-06-23
 Authors@R: person(c("Benjamin", "K"), "Johnson", role=c("aut", "cre"), email="ben.johnson@vai.org")
 Author: Benjamin K Johnson [aut, cre]
