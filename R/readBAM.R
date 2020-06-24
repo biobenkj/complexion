@@ -7,6 +7,7 @@
 #' @param bamParams optional any parameters to pass through to ScanBamParam
 #' @param which     optional a GRanges object with specific regions to extract
 #' @param style     what style the assembly annotations are in (e.g. 'chr1' == UCSC or '1' == NCBI)
+#' @param strand    what orientation is the first read in the pair (e.g. 'reverse')
 #'
 #' @return  a GenomicAlignmentPairs object
 #'
@@ -19,11 +20,14 @@
 
 readBAM <- function(bam, genome=c("hg19", "hg38", "mm10", "mm9"),
                     is.single=FALSE, bamParams=NULL, which=NULL,
-                    style="UCSC", ...) {
+                    style="UCSC", strand=c("unstranded", "forward", "reverse"), ...) {
   
   getStdChromGRanges <- function(x) {
-    ## ONLY works if chromosomes are properly ordered as in OrganismDbi
-    as(seqinfo(x), "GRanges")[ 1:(which(seqlevels(x) == "chrM") - 1) ] 
+    gr <- keepStandardChromosomes(x, pruning.mode = "coarse")
+    gr.prune <- keepSeqlevels(gr,
+                              value = seqlevels(gr)[1:(which(seqlevels(gr) == "chrM") - 1)],
+                              pruning.mode = "coarse")
+    return(gr.prune)
   }
   
   if(is.null(bamParams)) {
@@ -58,11 +62,23 @@ readBAM <- function(bam, genome=c("hg19", "hg38", "mm10", "mm9"),
       }
   }
   
+  #set the strand
+  strand <- match.arg(strand)
+  strand <- switch(strand,
+                   "unstranded"=0,
+                   "stranded"=1,
+                   "forward"=1,
+                   "reverse"=2)
+  
   if (is.single) {
-    readGAlignments(bam, param=bamParams)
+    ga <- readGAlignments(bam, param=bamParams)
   } else {
-    readGAlignmentPairs(bam, param=bamParams)
+    ga <- readGAlignmentPairs(bam, param=bamParams)
   }
+  
+  #set strandMode
+  strandMode(ga) <- strand
+  return(ga)
 }
 
 ## not exported; used for preseq estimation

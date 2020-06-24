@@ -12,6 +12,7 @@ readBAM(
   bamParams = NULL,
   which = NULL,
   style = "UCSC",
+  strand = c("unstranded", "forward", "reverse"),
   ...
 )
 }
@@ -27,6 +28,8 @@ readBAM(
 \item{which}{optional a GRanges object with specific regions to extract}
 
 \item{style}{what style the assembly annotations are in (e.g. 'chr1' == UCSC or '1' == NCBI)}
+
+\item{strand}{what orientation is the first read in the pair (e.g. 'reverse')}
 }
 \value{
 a GenomicAlignmentPairs object

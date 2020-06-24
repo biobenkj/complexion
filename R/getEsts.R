@@ -32,7 +32,7 @@ getEsts <- function(xx, withCI=FALSE, ...) {
     message("Done generating complexity estimator...")
     message("Building library complexity curves...")
     res <- data.frame(reads = as.double(xx[, 1] %*% xx[, 2]) * 1:100,
-                      frags = sapply(1:100, res.fun$f))
+                      frags = sapply(1:100, res.fun))
   } else {
     res.fun <- suppressWarnings(ds.rSAC.bootstrap(xx, mt = 100, times = 99, conf = 0.95, ...))
     message("Done generating complexity estimator...")
